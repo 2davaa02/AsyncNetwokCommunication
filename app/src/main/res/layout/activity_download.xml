@@ -22,7 +22,7 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Download!"
+            android:text="Search for artist!"
             android:layout_weight="0.1"
             android:id="@+id/go"/>
 

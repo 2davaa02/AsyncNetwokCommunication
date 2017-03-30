@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +27,7 @@ public class DownloadActivity extends Activity implements View.OnClickListener {
         protected String doInBackground(String... strings) {
             HttpURLConnection conn = null;
             try {
-                URL url = new URL("http://www.free-map.org.uk/course/mad/ws/hits.php?artist="+strings[0]);
+                URL url = new URL("http://www.free-map.org.uk/course/mad/ws/hits.php?artist="+strings[0]+"&format=json");
                 conn = (HttpURLConnection)url.openConnection();
 
                 if(conn.getResponseCode()==200)
@@ -33,9 +37,18 @@ public class DownloadActivity extends Activity implements View.OnClickListener {
                     String result="",line;
                     while((line=br.readLine())!=null)
                     {
-                        result+="\n"+line;
+                        result+=line;
                     }
-                    return result;
+                    JSONArray jsonArray=new JSONArray(result);
+                    String ret="";
+                    for(int i=0;i<jsonArray.length();i++)
+                    {
+                        JSONObject curObj=jsonArray.getJSONObject(i);
+                        String name=curObj.getString("song");
+                        int year=curObj.getInt("year");
+                        ret+="Song name: "+name+" ("+year+")"+"\n";
+                    }
+                    return ret;
                 }
                 else
                 {
@@ -43,6 +56,10 @@ public class DownloadActivity extends Activity implements View.OnClickListener {
                 }
             }
             catch (IOException e)
+            {
+                return e.toString();
+            }
+            catch (JSONException e)
             {
                 return e.toString();
             }
